@@ -4,18 +4,15 @@ import FormLogin from '../components/formLogin';
 
 const style = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: 'center',
-    marginTop: 200,
-    margin: 50,
   },
 });
 
-const Login = () => {
+const Login = ({navigation}) => {
   return (
     <View style={style.container}>
-      <View>
-        <FormLogin />
-      </View>
+      <FormLogin navigation={navigation} />
     </View>
   );
 };
