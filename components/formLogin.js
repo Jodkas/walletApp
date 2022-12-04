@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native';
-import {createUser} from '../db/firebase.js';
+import {login} from '../db/firebase.js';
 const style = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -31,27 +31,26 @@ const style = StyleSheet.create({
 const FormLogin = props => {
   const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
-  useEffect(() => {
-    console.log('email:', email);
-    console.log('password:', password);
-  }, [email, password]);
   const handleSubmit = () => {
-    createUser(email, password)
-      .then(e => {
-        console.log(e);
+    login(email, password)
+      .then(res => {
         props.navigation.navigate('Profile');
+        console.log('inicio de sesion correcto');
       })
-      .catch(e => Alert.alert(e));
+      .catch(err => Alert.alert(err));
   };
   return (
     <View style={style.container}>
       <TextInput
         style={style.input}
+        autoComplete="email"
+        keyboardType="email-address"
         placeholder="email"
         onChange={e => setemail(e.nativeEvent.text)}
       />
       <TextInput
         style={style.input}
+        autoComplete="password"
         placeholder="password"
         onChange={e => setPassword(e.nativeEvent.text)}
       />

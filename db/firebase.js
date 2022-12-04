@@ -1,6 +1,10 @@
 import {initializeApp} from 'firebase/app';
-
-import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import {getFirestore, collection, addDoc} from 'firebase/firestore/lite';
 
 import {
   API_KEY,
@@ -25,12 +29,37 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-const createUser = (user, password) => {
+const createUser = (email, password) => {
   return new Promise((res, rej) => {
-    createUserWithEmailAndPassword(auth, user, password)
-      .then(credential => res('creado'))
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(credential => res('usuario creado'))
       .catch(err => rej(err.message));
   });
 };
-export {createUser};
+
+const addUser = (first, last, email) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const docRef = await addDoc(collection(db, 'users'), {
+        first,
+        last,
+        email,
+      });
+      res('éxito');
+    } catch (err) {
+      rej(err);
+    }
+  });
+};
+
+const login = (email, password) => {
+  return new Promise((res, rej) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(credential => res('Inicio de sesion'))
+      .catch(err => rej(err.message));
+  });
+};
+
+export {createUser, addUser, login};
