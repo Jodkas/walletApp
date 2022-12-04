@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native';
-
+import {createUser} from '../db/firebase.js';
 const style = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -29,13 +29,32 @@ const style = StyleSheet.create({
 });
 
 const FormLogin = props => {
+  const [email, setemail] = useState('');
+  const [password, setPassword] = useState('');
+  useEffect(() => {
+    console.log('email:', email);
+    console.log('password:', password);
+  }, [email, password]);
   const handleSubmit = () => {
-    props.navigation.navigate('Profile');
+    createUser(email, password)
+      .then(e => {
+        console.log(e);
+        props.navigation.navigate('Profile');
+      })
+      .catch(e => Alert.alert(e));
   };
   return (
     <View style={style.container}>
-      <TextInput style={style.input} placeholder="mail" />
-      <TextInput style={style.input} placeholder="password" />
+      <TextInput
+        style={style.input}
+        placeholder="email"
+        onChange={e => setemail(e.nativeEvent.text)}
+      />
+      <TextInput
+        style={style.input}
+        placeholder="password"
+        onChange={e => setPassword(e.nativeEvent.text)}
+      />
       <TouchableOpacity style={style.button} onPress={handleSubmit}>
         <Text style={{fontSize: 18, fontWeight: 'bold'}}>Iniciar sesion</Text>
       </TouchableOpacity>

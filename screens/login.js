@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
 import FormLogin from '../components/formLogin';
 
+
+
 const style = StyleSheet.create({
   container: {
     flex: 1,
