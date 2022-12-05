@@ -1,0 +1,4 @@
+* Para generar el apk se ejecuta la lina de comandos:
+--> ./gradlew --gradle-user-home=/.gradle assembleRelease
+
+* Se indica con el --gradle-user... donde esta el archivo gradle.properties

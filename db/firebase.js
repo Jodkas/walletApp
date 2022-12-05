@@ -3,6 +3,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 import {getFirestore, collection, addDoc} from 'firebase/firestore/lite';
 
@@ -62,4 +63,15 @@ const login = (email, password) => {
   });
 };
 
-export {createUser, addUser, login};
+const signOutUser = () => {
+  return new Promise((res, rej) => {
+    signOut(auth)
+      .then(() => {
+        console.log('cerrada');
+        res('Cesion cerrada');
+      })
+      .catch(err => rej(err));
+  });
+};
+
+export {createUser, addUser, login, signOutUser};

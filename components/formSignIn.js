@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {createUser, addUser} from '../db/firebase.js';
+import {saveUser} from '../db/localStorage.js';
 
 const style = StyleSheet.create({
   container: {
@@ -42,6 +43,7 @@ const FormSignIn = props => {
       } else {
         await createUser(email, password);
         await addUser(first, last, email);
+        await saveUser(email, password);
         props.navigation.navigate('Login');
       }
     } catch (err) {
