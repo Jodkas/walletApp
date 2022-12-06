@@ -6,11 +6,12 @@ import {
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import Load from '../components/load';
 import FormLogin from '../components/formLogin';
 import CheckBox from '@react-native-community/checkbox';
-import {getUser} from '../db/localStorage';
+import {getUser, saveUser} from '../db/localStorage';
+import {login, signOutUser} from '../db/firebase.js';
 
 const style = StyleSheet.create({
   container: {
@@ -19,6 +20,7 @@ const style = StyleSheet.create({
   },
   signin: {
     alignItems: 'center',
+    alignSelf: 'center',
   },
   header: {
     fontSize: 50,
@@ -29,27 +31,48 @@ const style = StyleSheet.create({
   },
 });
 
-const Login = ({navigation}) => {
-  const [check, setCheck] = useState(false);
-  const [pageLoad, setPageLoad] = useState(false);
+const Login = ({navigation, route}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginLoad, setloginLoad] = useState(false);
 
-  const handleSignin = () => {
-    navigation.navigate('SignIn');
+  const handleLogIn = (email, password) => {
+    setloginLoad(true);
+    login(email, password)
+      .then(res => {
+        saveUser(email, password);
+        navigation.navigate('Profile');
+        setloginLoad(false);
+        console.log('inicio de sesion correcto');
+      })
+      .catch(err => {
+        Alert.alert(err);
+        setloginLoad(false);
+      });
   };
+
+  useEffect(() => {
+    getUser('@user')
+      .then(user => {
+        setEmail(user.email);
+        setPassword(user.password);
+        handleLogIn(user.email, user.password);
+      })
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <View style={style.container}>
       <Text style={style.header}>WalletApp</Text>
       <FormLogin
         navigation={navigation}
-        pageLoad={pageLoad}
-        setPageLoad={setPageLoad}
+        functions={{setPassword, setEmail, handleLogIn}}
+        variables={{email, password, loginLoad}}
       />
       <TouchableOpacity
-        disabled={pageLoad}
-        style={pageLoad ? [style.signin, {opacity: 0.5}] : style.signin}
-        onPress={handleSignin}>
-        <Text>Registrarse</Text>
+        disabled={loginLoad}
+        style={loginLoad ? [style.signin, {opacity: 0.5}] : style.signin}>
+        <Text onPress={() => navigation.navigate('SignIn')}>Registrarse</Text>
       </TouchableOpacity>
     </View>
   );
