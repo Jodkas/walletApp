@@ -11,7 +11,7 @@ import {
 import FormLogin from '../components/formLogin';
 import CheckBox from '@react-native-community/checkbox';
 import {getUser, saveUser} from '../db/localStorage';
-import {login, signOutUser} from '../db/firebase.js';
+import {getUserData, login, signOutUser} from '../db/firebase.js';
 
 const style = StyleSheet.create({
   container: {
@@ -39,9 +39,10 @@ const Login = ({navigation, route}) => {
   const handleLogIn = (email, password) => {
     setloginLoad(true);
     login(email, password)
+      .then(res => saveUser(email, password))
+      .then(() => getUserData(email))
       .then(res => {
-        saveUser(email, password);
-        navigation.navigate('Profile');
+        navigation.navigate('Profile', res);
         setloginLoad(false);
         console.log('inicio de sesion correcto');
       })
@@ -50,7 +51,6 @@ const Login = ({navigation, route}) => {
         setloginLoad(false);
       });
   };
-
   useEffect(() => {
     getUser('@user')
       .then(user => {
@@ -72,7 +72,11 @@ const Login = ({navigation, route}) => {
       <TouchableOpacity
         disabled={loginLoad}
         style={loginLoad ? [style.signin, {opacity: 0.5}] : style.signin}>
-        <Text onPress={() => navigation.navigate('SignIn')}>Registrarse</Text>
+        <Text
+          style={{color: 'black'}}
+          onPress={() => navigation.navigate('SignIn')}>
+          Registrarse
+        </Text>
       </TouchableOpacity>
     </View>
   );

@@ -8,7 +8,7 @@ const style = StyleSheet.create({
     borderRightWidth: 2,
     borderBottomWidth: 5,
     borderRadius: 50,
-    borderColor: '#812',
+    borderColor: 'black',
   },
 });
 
@@ -36,6 +36,7 @@ const Load = props => {
         {
           height: props.scale * 10,
           width: props.scale * 10,
+          borderColor: props.color,
           transform: [{rotate: spin}],
         },
       ]}></Animated.View>

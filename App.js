@@ -14,15 +14,17 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{title: 'Inicio de sesion'}}
-        />
+        {
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{title: 'Inicio de sesion'}}
+          />
+        }
         <Stack.Screen
           name="Profile"
           component={Profile}
-          options={{headerBackVisible: false}}
+          options={{title: 'Perfil'}}
         />
         <Stack.Screen
           name="SignIn"

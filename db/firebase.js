@@ -5,7 +5,19 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import {getFirestore, collection, addDoc} from 'firebase/firestore/lite';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  getDocs,
+  where,
+  orderBy,
+  limit,
+  doc,
+  getDoc,
+  setDoc,
+} from 'firebase/firestore/lite';
 
 import {
   API_KEY,
@@ -40,13 +52,15 @@ const createUser = (email, password) => {
   });
 };
 
-const addUser = (first, last, email) => {
+const addUser = (username, first, last, email, password) => {
   return new Promise(async (res, rej) => {
     try {
-      const docRef = await addDoc(collection(db, 'users'), {
+      const docRef = await setDoc(doc(db, 'users', email), {
+        username,
         first,
         last,
         email,
+        password,
       });
       res('éxito');
     } catch (err) {
@@ -74,4 +88,30 @@ const signOutUser = () => {
   });
 };
 
-export {createUser, addUser, login, signOutUser};
+const getUserData = email => {
+  return new Promise(async (res, rej) => {
+    const userRef = doc(db, 'users', email);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      res(docSnap.data());
+    } else {
+      rej('Error al encontrar usuario');
+    }
+  });
+};
+
+const userExist = username => {
+  return new Promise(async (res, rej) => {
+    console.log('hola');
+    const userRef = collection(db, 'users');
+    const q = query(userRef, where('username', '==', username));
+    const querySnapshot = await getDocs(q);
+    let count = 0;
+    querySnapshot.forEach(doc => {
+      count++;
+    });
+    count > 0 ? rej('Usuario ya existente') : res('Usuario disponible');
+  });
+};
+
+export {createUser, addUser, login, signOutUser, userExist, getUserData};
